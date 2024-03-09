@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 const Load: React.FC = () => {
   const [loadedData, setLoadedData] = useState<string[]>([]);
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   useEffect(() => {
     const getAllLocalStorageKeys = () => {
       const keys: string[] = [];

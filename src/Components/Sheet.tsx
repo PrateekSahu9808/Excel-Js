@@ -7,8 +7,8 @@ const Sheet: React.FC = () => {
  
   const [sheetName, setSheetName] = useState("");
   const el = useRef<HTMLDivElement>(null);
-  let spreadsheetRef = useRef<any>(null);
-   let navigate = useNavigate();
+  const spreadsheetRef = useRef<Spreadsheet | null>(null);
+   const navigate = useNavigate();
   const handleSendData = () => {
     if (sheetName && spreadsheetRef.current) {
       const key = sheetName;

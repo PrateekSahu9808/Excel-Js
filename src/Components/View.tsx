@@ -7,7 +7,7 @@ import { saveAs } from "file-saver";
 
 const View: React.FC = () => {
   const { key } = useParams<{ key: string }>();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<Spreadsheet | null>(null);
   const spreadsheetRef = useRef<Spreadsheet | null>(null);
   console.log(data);
   useEffect(() => {
@@ -313,7 +313,7 @@ const View: React.FC = () => {
 
               row.eachCell((cell, colNumber) => {
                 const adjustedColNumber = colNumber - 1;
-                   console.log(cell)
+                console.log(cell);
                 cells[adjustedColNumber] = {
                   text: cell.text || "",
                   font: cell.style.font || {},
@@ -333,23 +333,12 @@ const View: React.FC = () => {
 
             importedSheets.push({ name: worksheet.name, rows });
           });
-
-          
-          // console.log(
-          //   "Imported Data",
-          //   JSON.stringify(importedSheets)
-          // );
-
-          
           const existingData = data || [];
 
-          
           const mergedData = existingData.concat(importedSheets);
 
-         
           setData(mergedData);
 
-          
           if (spreadsheetRef.current) {
             spreadsheetRef.current.loadData(mergedData);
           }

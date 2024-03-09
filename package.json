@@ -1,9 +1,12 @@
 {
+  "homepage": "https://prateeksahu9808.github.io/Excel-Js/x",
   "name": "x-spreadsheet",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -28,6 +31,7 @@
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.1",
     "@testing-library/user-event": "^14.5.2",
+    "@types/file-saver": "^2.0.7",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.2.56",
     "@types/react-beautiful-dnd": "^13.1.8",
@@ -49,7 +53,7 @@
     "tailwindcss": "^3.4.1",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3",
+    "typescript": "^5.4.2",
     "vite": "^5.1.4",
     "vite-tsconfig-paths": "^4.3.1"
   }

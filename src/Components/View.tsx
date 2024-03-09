@@ -7,16 +7,18 @@ import { saveAs } from "file-saver";
 
 const View: React.FC = () => {
   const { key } = useParams<{ key: string }>();
-  const [data, setData] = useState<Spreadsheet | null>(null);
+  const [data, setData] = useState<Spreadsheet | null| []>([]);
   const spreadsheetRef = useRef<Spreadsheet | null>(null);
   console.log(data);
   useEffect(() => {
     const loadDataByKey = () => {
+      if (key === undefined) return;
       const storedData = localStorage.getItem(key);
+
       if (storedData) {
         setData(JSON.parse(storedData));
       } else {
-        setData([]);
+        setData(null);
       }
     };
     loadDataByKey();
@@ -28,7 +30,7 @@ const View: React.FC = () => {
         mode: "edit",
         showToolbar: true,
         showGrid: true,
-        data: [],
+        // data: [],
         row: {
           len: 100,
           height: 25,
@@ -54,6 +56,7 @@ const View: React.FC = () => {
   const handleExport = () => {
     if (spreadsheetRef.current) {
       const newData = spreadsheetRef.current.getData();
+     
       exportSheet(newData, `${key}.xlsx`);
     } else {
       console.error("Spreadsheet instance is not available.");
@@ -66,6 +69,7 @@ const View: React.FC = () => {
 
   const handleSaveData = () => {
     if (spreadsheetRef.current) {
+      if (key === undefined) return;
       const newData = spreadsheetRef.current.getData();
       localStorage.setItem(key, JSON.stringify(newData));
       alert(`Data is successfully saved on the file ${key}`);
@@ -74,10 +78,11 @@ const View: React.FC = () => {
     }
   };
 
-  const exportSheet = (sdata, filename) => {
+  const exportSheet = (sdata:any, filename:any) => {
     const workbook = new ExcelJS.Workbook();
-    console.log(sdata);
-    sdata.forEach((sheet) => {
+    
+
+    sdata.forEach((sheet:any) => {
       const { name, rows, styles } = sheet;
       const worksheet = workbook.addWorksheet(name);
 
@@ -86,7 +91,7 @@ const View: React.FC = () => {
       }
 
       if (styles && styles.length > 0) {
-        styles.forEach((style, styleIndex) => {
+        styles.forEach((style:any, styleIndex:any) => {
           const rowNumber = styleIndex + 1;
 
           if (style.cells) {
@@ -129,7 +134,7 @@ const View: React.FC = () => {
       }
 
       if (sheet.merges) {
-        sheet.merges.forEach((range) => {
+        sheet.merges.forEach((range:any) => {
           worksheet.mergeCells(range);
         });
       }
@@ -149,21 +154,22 @@ const View: React.FC = () => {
       });
   };
 
-  const getColumnName = (colNumber) => {
-    let dividend = colNumber + 1;
+  const getColumnName = (colNumber:any) => {
+    let dividend= colNumber + 1;
     let columnName = "";
-    let modulo;
-
+    let modulo
+   
     while (dividend > 0) {
       modulo = (dividend - 1) % 26;
       columnName = String.fromCharCode(65 + modulo) + columnName;
-      dividend = parseInt((dividend - modulo) / 26, 10);
+      // dividend = parseInt((dividend - modulo) / 26, 10);
+      dividend = parseInt(String((dividend - modulo) / 26), 10);
     }
 
     return columnName;
   };
 
-  const applyStyles = (cell, style) => {
+  const applyStyles = (cell:any, style:any) => {
     if (style) {
       if (style.font) {
         cell.font = cell.font || {};
@@ -223,72 +229,6 @@ const View: React.FC = () => {
     }
   };
 
-  // const handleFileUpload = async (
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const file = event.target.files && event.target.files[0];
-
-  //   if (file) {
-  //     const reader = new FileReader();
-
-  //     reader.onload = async (e) => {
-  //       try {
-  //         const workbook = new ExcelJS.Workbook();
-  //         await workbook.xlsx.load(file);
-
-  //         const importedSheets = [];
-
-  //         workbook.eachSheet((worksheet) => {
-  //           const rows = {};
-
-  //           worksheet.eachRow((row, rowNumber) => {
-  //             const cells = {};
-
-  //             row.eachCell((cell, colNumber) => {
-  //               const adjustedColNumber = colNumber - 1; // Adjusting column index to start from 0
-
-  //               cells[adjustedColNumber] = {
-  //                 text: cell.text || "",
-  //                 font: cell.font || {},
-  //                 alignment: cell.alignment || {},
-  //                 border: cell.border || {},
-  //                 fill: cell.fill || { type: "pattern", pattern: "none" },
-  //               };
-  //             });
-
-  //             // Adjusting row index based on your existing data structure
-  //             const adjustedRowNumber = rowNumber - 1;
-
-  //             rows[adjustedRowNumber] = {
-  //               cells,
-  //               __rowNum__: adjustedRowNumber,
-  //             };
-  //           });
-
-  //           importedSheets.push({ name: worksheet.name, rows });
-  //         });
-
-  //         // Assuming existingData is your current structure
-  //         const existingData = data || [];
-
-  //         // Merge sheets from imported data to existing data
-  //         const mergedData = existingData.concat(importedSheets);
-
-  //         // Update the state with the merged data
-  //         setData(mergedData);
-
-  //         // Load the merged data into the spreadsheet
-  //         if (spreadsheetRef.current) {
-  //           spreadsheetRef.current.loadData(mergedData);
-  //         }
-  //       } catch (error) {
-  //         console.error("Error handling file change:", error);
-  //       }
-  //     };
-
-  //     reader.readAsBinaryString(file);
-  //   }
-  // };
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -298,22 +238,25 @@ const View: React.FC = () => {
     if (file) {
       const reader = new FileReader();
 
-      reader.onload = async (e) => {
+      reader.onload = async () => {
         try {
-          const workbook = new ExcelJS.Workbook();
+          const workbook:any = new ExcelJS.Workbook();
           await workbook.xlsx.load(file);
 
-          const importedSheets = [];
+          // const importedSheets:[] = [];
+          const importedSheets: { name: string; rows: any }[] = [];
 
-          workbook.eachSheet((worksheet) => {
-            const rows = {};
+          workbook.eachSheet((worksheet:any) => {
+            // const rows = {};
+             const rows: { [key: number]: any } = {};
 
-            worksheet.eachRow((row, rowNumber) => {
-              const cells = {};
-
-              row.eachCell((cell, colNumber) => {
+            worksheet.eachRow((row:any, rowNumber:any) => {
+              // const cells = {};
+                 const cells: { [key: number]: any } = {};
+              row.eachCell((cell:any, colNumber:any) => {
                 const adjustedColNumber = colNumber - 1;
-                console.log(cell);
+                
+                
                 cells[adjustedColNumber] = {
                   text: cell.text || "",
                   font: cell.style.font || {},
@@ -335,7 +278,8 @@ const View: React.FC = () => {
           });
           const existingData = data || [];
 
-          const mergedData = existingData.concat(importedSheets);
+          // const mergedData = existingData.concat(importedSheets);
+          const mergedData:any = (existingData as any[]).concat(importedSheets);
 
           setData(mergedData);
 
